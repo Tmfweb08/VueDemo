@@ -1,7 +1,7 @@
 <!--底部组件-->
 <template>
   <footer class="footer_guide">
-    <div href="javascript:;" class="guide_item" @click="goto('/msite')" :class="{on: isCurrent('/msite')}">
+    <div class="guide_item" @click="goto('/msite')" :class="{on: isCurrent('/msite')}">
       <span class="item_icon">
         <i class="iconfont icon-waimai"></i>
       </span>

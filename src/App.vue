@@ -2,7 +2,8 @@
 <template>
   <div id="app">
     <router-view />
-    <FooterGuide />
+    <!--$route代表当前路由-->
+    <FooterGuide v-show="$route.meta.showFooter" />
   </div>
 </template>
 
@@ -12,6 +13,10 @@
   export default {
     components: {
       FooterGuide
+    },
+    mounted(){
+      //异步获取address，并保存到state
+      this.$store.dispatch('getAddress')
     }
   }
 </script>

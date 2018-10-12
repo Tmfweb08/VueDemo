@@ -6,30 +6,47 @@ import Msite from '../pages/Msite/Msite.vue'
 import Search from '../pages/Search/Search.vue'
 import Order from '../pages/Order/Order.vue'
 import Profile from '../pages/Profile/Profile.vue'
+import Login from '../pages/Login/Login.vue'
 
 Vue.use(VueRouter)
 
 export default new VueRouter({
   routes: [
     {
+      path: '/msite',
+      component: Msite,
+      meta: {
+        showFooter: true    //是否显示底部组件，只有login没有底部组件，其他均为true
+      }
+    },
+    {
+      path: '/search',
+      component: Search,
+      meta: {
+        showFooter: true
+      }
+    },
+    {
+      path: '/order',
+      component: Order,
+      meta: {
+        showFooter: true
+      }
+    },
+    {
+      path: '/profile',
+      component: Profile,
+      meta: {
+        showFooter: true
+      }
+    },
+    {
       path: '/',
       redirect: '/msite'
     },
     {
-      path: '/msite',
-      component: Msite
-    },
-    {
-      path: '/search',
-      component: Search
-    },
-    {
-      path: '/order',
-      component: Order
-    },
-    {
-      path: '/profile',
-      component: Profile
+      path: '/login',
+      component: Login
     }
   ]
 })
