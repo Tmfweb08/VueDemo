@@ -14,17 +14,17 @@ export const reqShops = ({latitude, longitude}) => ajax('/api/shops', {latitude,
 export const reqCaptchas = () => ajax('/appi/captchas')
 
 /*账号密码登陆*/
-export const accountLogin = (name, pwd, captcha) => ajax('/api/login_pwd', {
+export const reqPwdLogin = ({name, pwd, captcha}) => ajax('/api/login_pwd', {
   name,
   pwd,
   captcha
 }, 'POST')
 
 /*获取短信验证码*/
-export const mobileCode = phone => ajax('/api/sendcode', {phone})
+export const reqSendCode = phone => ajax('/api/sendcode', {phone})
 
 /*手机号验证码登陆*/
-export const phoneLogin = (phone, code) => ajax('api/login_sms', 'POST')
+export const reqSmsLogin = (phone, code) => ajax('api/login_sms', 'POST')
 
 /*获取用户信息(根据会话)*/
 export const reqUser = () => ajax('/api/userinfo')

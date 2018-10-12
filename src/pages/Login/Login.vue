@@ -57,6 +57,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import {reqSendCode} from '../../api'
   import  AlertTip from '../../components/AlertTip/AlertTip.vue'
   export default {
     data(){
@@ -80,24 +81,34 @@
     },
     methods: {
       //发送验证码
-      sendCode (){
+      async sendCode (){
         //alert('-----')
         //启动倒计时
         this.computeTime = 30
         //启动循环定时器
         const intervalId = setInterval(() => {
           //每个1s减1，直到为0为止，停止(清除定时器)
-          if(this.computeTime === 0){
+          if(this.computeTime <= 0){
             clearInterval(intervalId)
             return
           }
           this.computeTime--
         },1000)
+
+        //发送请求：发送短信验证码
+        const result = await reqSendCode(this.phone)
+        if(result.code === 0){
+          alert('验证码短信已发送')
+        }else{
+          //停止倒计时
+          computeTime = 0
+          alert('警告提示：'+result.msg)
+        }
       },
       //更新图片验证码
-      updateCaptcha (){
+      /*updateCaptcha (){
         this.$refs.captcha.src = ''+Date.now()  //告诉浏览器是一个新的地址，重新发送请求，获取新的图片验证码
-      },
+      },*/
       //异步登陆
       showAlert(alertText){
         this.alertShow = true
