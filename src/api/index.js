@@ -24,7 +24,17 @@ export const reqPwdLogin = ({name, pwd, captcha}) => ajax('/api/login_pwd', {
 export const reqSendCode = phone => ajax('/api/sendcode', {phone})
 
 /*手机号验证码登陆*/
-export const reqSmsLogin = (phone, code) => ajax('api/login_sms', 'POST')
+export const reqSmsLogin = (phone, code) => ajax('api/login_sms',{phone, code}, 'POST')
 
 /*获取用户信息(根据会话)*/
 export const reqUser = () => ajax('/api/userinfo')
+
+/*退出登录*/
+export const reqLogout = () => ajax('/api/logout')
+
+/*获取商家信息*/
+export const reqShopInfo = () => ajax('/shop_info')
+/*获取商家评价数组*/
+export const reqShopRatings = () => ajax('/shop_ratings')
+/*获取商家商品数组*/
+export const reqShopGoods = () => ajax('/shop_goods')

@@ -17,6 +17,8 @@
     mounted(){
       //异步获取address，并保存到state
       this.$store.dispatch('getAddress')
+      //异步获取登陆用户信息
+      this.$store.dispatch('getUserInfo')
     }
   }
 </script>

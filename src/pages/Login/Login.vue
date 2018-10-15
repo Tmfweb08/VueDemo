@@ -13,7 +13,8 @@
           <div :class="{on: loginWay}">
             <section class="login_message">
               <input type="tel" maxlength="11" placeholder="手机号" v-model="phone">
-              <button :disabled="!isRightPhone || computeTime>0" class="get_verification" :class="{right_phone_number: isRightPhone}" @click="sendCode">
+              <button :disabled="!isRightPhone || computeTime>0" class="get_verification"
+                      :class="{right_phone_number: isRightPhone}" @click.prevent="sendCode">
                 {{computeTime>0 ? `已发送(${computeTime}s)` : '获取验证码'}}
                 <!--获取验证码-->
               </button>
@@ -39,12 +40,12 @@
                 </div>
               </section>
               <section class="login_message">
-                <input type="text" maxlength="11" placeholder="验证码" v-model="captcha" @click="updateCaptcha">
-                <img class="get_verification" src="./images/captcha.svg" alt="captcha">
+                <input type="text" maxlength="11" placeholder="验证码" v-model="captcha">
+                <img class="get_verification" src="./images/captcha.svg" alt="captcha" ref="captcha" @click="updateCaptcha">
               </section>
             </section>
           </div>
-          <button class="login_submit">登录</button>
+          <button class="login_submit" @click.prevent="login">登录</button>
         </form>
         <a href="javascript:;" class="about_us">关于我们</a>
       </div>
@@ -57,7 +58,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import {reqSendCode} from '../../api'
+  import {reqSendCode, reqPwdLogin, reqSmsLogin} from '../../api'
   import  AlertTip from '../../components/AlertTip/AlertTip.vue'
   export default {
     data(){
@@ -90,6 +91,7 @@
           //每个1s减1，直到为0为止，停止(清除定时器)
           if(this.computeTime <= 0){
             clearInterval(intervalId)
+            this.computeTime = 0
             return
           }
           this.computeTime--
@@ -101,44 +103,68 @@
           alert('验证码短信已发送')
         }else{
           //停止倒计时
-          computeTime = 0
-          alert('警告提示：'+result.msg)
+          this.computeTime = 0
+          //alert('警告提示：'+result.msg)
+          alert(result.msg).then(action => {
+            console.log('点击确定')
+          })
         }
       },
       //更新图片验证码
-      /*updateCaptcha (){
-        this.$refs.captcha.src = ''+Date.now()  //告诉浏览器是一个新的地址，重新发送请求，获取新的图片验证码
-      },*/
+      updateCaptcha (){
+        this.$refs.captcha.src = 'http://localhost:4000/captcha?time='+Date.now()  //告诉浏览器是一个新的地址，重新发送请求，获取新的图片验证码
+      },
       //异步登陆
       showAlert(alertText){
         this.alertShow = true
         this.alertText = alertText
       },
-      login (){
+      //请求登陆
+      async login (){
+        let result
         //前台表单验证
         if(this.loginWay){
           //短信登陆
-          const {rightPhone, phone, code} = this
-          if(!this.rightPhone){
+          const {phone, code} = this
+          if(!this.isRightPhone){
             //提示手机号不正确
-            this.showAlert('手机号不正确')
-          }else if(/^\d{6}$/.test(code)){
+            return this.showAlert('手机号不正确')
+          }else if(!/^\d{6}$/.test(code)){
             //验证必须是6位数字
-            this.showAlert('验证必须是6位数字')
+            return this.showAlert('验证必须是6位数字')
           }
+          //发短信登陆请求
+          result = await reqSmsLogin(phone, code)
         }else{
           //密码登陆
           const {name, pwd, captcha} = this
           if(!this.name){
             //用户必须指定
-            this.showAlert('用户必须指定')
+            return this.showAlert('用户必须指定')
           }else if(!this.pwd){
             //密码必须指定
-            this.showAlert('密码必须指定')
+            return this.showAlert('密码必须指定')
           }else if(!this.captcha){
             //验证码必须指定
-            this.showAlert('验证码必须指定')
+            return this.showAlert('验证码必须指定')
           }
+          //发密码登陆请求
+          result = await reqPwdLogin({name, pwd, captcha})
+        }
+        //请求结束后，停止倒计时
+        this.computeTime = 0
+        //更新验证码
+        this.updateCaptcha()
+        //根据请求的结果进行相应的处理
+        //文档中规定，code=0时，成功，数据存放在data中，否则失败，错误信息提示，存放在msg中
+        if(result.code === 0){    //成功
+          const userInfo = result.data
+          //将user保存到state
+          this.$store.dispatch('saveUser', userInfo)
+          //跳转到个人中心界面
+          this.$router.replace('/profile')
+        }else{  //失败
+          alert(result.msg)
         }
       },
       closeTip (){

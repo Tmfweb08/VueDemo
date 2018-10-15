@@ -1,7 +1,8 @@
 <template>
   <div class="shop_container">
     <ul class="shop_list" v-if="shops.length">
-      <li class="shop_li border-1px" v-for="(item, index) in shops" :key="index">
+      <li class="shop_li border-1px" v-for="(item, index) in shops"
+          :key="index" @click="$router.push('/shop')">
         <a>
           <div class="shop_left">
             <img class="shop_img" :src="imgBaseUrl+item.image_path">
@@ -10,7 +11,7 @@
             <section class="shop_detail_header">
               <h4 class="shop_title ellipsis">{{item.name}}</h4>
               <ul class="shop_detail_ul">
-                <li class="supports" v-for="item in item.supports" :key="item.id">{{item.icon_name}}</li>
+                <li class="supports" v-for="(support, index) in item.supports" :key="index">{{support.icon_name}}</li>
               </ul>
             </section>
             <section class="shop_rating_order">
