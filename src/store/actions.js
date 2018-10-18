@@ -17,7 +17,7 @@ import {
   RESET_USER,
   RECEIVE_INFO,
   RECEIVE_RATINGS,
-  RECEIVE_GOODS
+  RECEIVE_GOODS, INCREMENT_FOOD_COUNT, DECREMENT_FOOD_COUNT, CLEAR_CART
 } from './mutation-types'
 //import state from "./state";
 
@@ -88,7 +88,7 @@ export default {
   },
 
 // 异步获取商家商品列表
-  async getShopGoods({commit}, cb) {
+  async getShopGoods({commit}, cb) {  //cb是个回调函数
     const result = await reqShopGoods()
     if(result.code===0) {
       const goods = result.data
@@ -98,4 +98,17 @@ export default {
     }
   },
 
+  //更新指定的food的count
+  updateFoodCount ({commit}, {food, isAdd}){
+    if(isAdd){  //增加
+      commit(INCREMENT_FOOD_COUNT, {food})
+    }else {     //减少
+      commit(DECREMENT_FOOD_COUNT, {food})
+    }
+  },
+
+  //清空购物车
+  clearCart({commit}){
+    commit(CLEAR_CART)
+  }
 }
